@@ -7,14 +7,11 @@ import {addItem, updateCart, removeItemCart} from './CartItems'
 const Card = ({ product, showViewProductButton = true , showAddCartButton = true, cartUpdate = false, removeItem = false}) => {
 
     const [redirect, setRedirect] = useState(false);
-    const [count, setCount] = useState("");
-
-    const getCount = (productCount) => {
-        setCount(productCount)
-    }
+    const [count, setCount] = useState(1);
 
     useEffect(() => {
-        getCount(product.count);
+        console.log("useEffect running, count value :- ", count);
+        setCount(product.count);
     }, []);
 
     const showViewButton = (showViewProductButton) => {
@@ -54,22 +51,25 @@ const Card = ({ product, showViewProductButton = true , showAddCartButton = true
                 ( <span className="badge badge-primary badge-pill"> Out Of Stock </span> )
     }
 
-    const handleOnChange = (id, event) => {
-        setCount(event.target.value < 1 ? 1 : event.target.value)
-        if(event.target.value >= 1){
-            updateCart(id, event.target.value);
+    const handleOnChange = (id, e) => {
+        setCount(e.target.value < 1 ? 1 : e.target.value);
+        if(e.target.value >= 1 ){
+            updateCart(id, e.target.value);
         }
+        window.location.reload();
     }
 
     const showCartUpdateOption = (cartUpdate) => {
-        return (cartUpdate && <div>
-            <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                    <span className="input-group-text"> Adjust Quantity </span>
+        return (
+            <form>
+                <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text"> Adjust Quantity </span>
+                    </div>
+                    <input type="number" name="quantity" className="form-control" value={count} onChange={(e) => handleOnChange(product._id, e)} /> 
                 </div>
-                <input type="number" name="quantity" className="form-control" value={count} onChange={(event) => handleOnChange(product._id, event)} /> 
-            </div>
-        </div>)
+            </form>
+        )
     }
 
     const removeItemFromCart = (removeItem) => {
@@ -82,7 +82,6 @@ const Card = ({ product, showViewProductButton = true , showAddCartButton = true
 
     return(
             <div className="card">
-
                 {redirectUser(redirect)}
 
                 <div className="card-header name text-capitalize" > {product.name} </div>
@@ -96,16 +95,12 @@ const Card = ({ product, showViewProductButton = true , showAddCartButton = true
                     <p className="black-10"> {product.price} Rs </p>
                     <p className="black-9"> Category : {product.category && product.category.name} </p>
                     <p className="black-8"> Added on {moment(product.createdAt).fromNow()} </p>
-
                         {showStock(product.quantity)}
-
                         <br/>
-
-                        {showViewButton(showViewProductButton)}
-                        {showAddCart(showAddCartButton)}
-                        {removeItemFromCart(removeItem)}
-                        {showCartUpdateOption(cartUpdate)}
-                        
+                        {showViewProductButton && showViewButton(showViewProductButton)}
+                        {showAddCartButton && showAddCart(showAddCartButton)}
+                        {removeItem && removeItemFromCart(removeItem)}
+                        {cartUpdate && showCartUpdateOption(cartUpdate)}
                 </div> 
             </div>
     )

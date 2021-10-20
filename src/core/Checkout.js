@@ -33,6 +33,7 @@ const Checkout = ({products}) => {
 
     const getTotal = () => {
            return products.reduce((currentValue, nextValue) => {
+                // initially currentValue starts from 0 number, nextValue is products one by one !!
                 return currentValue + nextValue.count * nextValue.price;
            }, 0); 
     }
